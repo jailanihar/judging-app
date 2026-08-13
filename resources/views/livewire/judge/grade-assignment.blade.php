@@ -48,13 +48,22 @@
                             <flux:text class="text-xs font-medium text-zinc-600 dark:text-zinc-400">{{ $criterion->weight }}</flux:text>
                         </div>
                     </div>
-                    <div class="w-36 shrink-0">
-                        <flux:select wire:model="scores.{{ $criterion->id }}" :label="__('Score')" required>
-                            <option value="">{{ __('Select') }}</option>
+                    <div class="flex shrink-0 flex-col items-end gap-2">
+                        <flux:text class="text-xs font-medium text-zinc-500 dark:text-zinc-400">{{ __('Score') }}</flux:text>
+                        <div class="flex items-center gap-1.5">
                             @for($i = 0; $i <= 5; $i++)
-                                <option value="{{ $i }}">{{ $i }}</option>
+                                <flux:button
+                                    size="xs"
+                                    variant="ghost"
+                                    class="size-9 p-0"
+                                    :class="$scores[$criterion->id] == $i ? 'bg-navy-600 text-white hover:bg-navy-700 dark:bg-navy-500 dark:text-white dark:hover:bg-navy-400' : 'text-zinc-500 hover:text-navy-600 dark:text-zinc-400 dark:hover:text-navy-300'"
+                                    wire:click="scores.{{ $criterion->id }} = {{ $i }}"
+                                    wire:key="score-{{ $criterion->id }}-{{ $i }}"
+                                >
+                                    {{ $i }}
+                                </flux:button>
                             @endfor
-                        </flux:select>
+                        </div>
                     </div>
                 </div>
             </flux:card>

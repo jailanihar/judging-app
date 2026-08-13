@@ -15,7 +15,7 @@ class GradeAssignment extends Component
     public JudgingAssignment $assignment;
 
     /**
-     * @var array<int, int|string>
+     * @var array<int, int|null>
      */
     public array $scores = [];
 
@@ -41,16 +41,16 @@ class GradeAssignment extends Component
         $existingScores = $this->assignment->scores()->get()->keyBy('criterion_id');
 
         foreach ($activeCriteria as $criterion) {
-            $this->scores[$criterion->id] = $existingScores[$criterion->id]->score ?? '';
+            $this->scores[$criterion->id] = $existingScores[$criterion->id]->score ?? null;
         }
 
-        $this->gradedCount = collect($this->scores)->filter(fn ($s) => $s !== '')->count();
+        $this->gradedCount = collect($this->scores)->filter(fn ($s) => $s !== null)->count();
     }
 
     public function saveScores(): void
     {
         foreach ($this->scores as $criterionId => $score) {
-            if ($score !== '' && $score !== null) {
+            if ($score !== null && $score !== '') {
                 Score::updateOrCreate(
                     [
                         'judging_assignment_id' => $this->assignment->id,
@@ -73,7 +73,7 @@ class GradeAssignment extends Component
     {
         $activeCriteria = Criterion::where('is_active', true)->orderBy('code')->get();
         $this->totalCriteria = $activeCriteria->count();
-        $this->gradedCount = collect($this->scores)->filter(fn ($s) => $s !== '')->count();
+        $this->gradedCount = collect($this->scores)->filter(fn ($s) => $s !== null)->count();
 
         return view('livewire.judge.grade-assignment', [
             'activeCriteria' => $activeCriteria,
